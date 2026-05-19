@@ -1,33 +1,24 @@
 # From-Scratch ML Classifiers
 
-Machine learning classifiers implemented from scratch using Python and NumPy.
+A machine learning project focused on implementing, evaluating, and validating Logistic Regression from scratch using Python and NumPy.
 
-Currently, the project includes a complete Logistic Regression pipeline with batch gradient descent, binary cross-entropy loss, preprocessing, evaluation metrics, visualizations, learning-rate comparison, and cross-validation.
+The project is organized as a reproducible experiment pipeline, with separate modules for data loading, preprocessing, modeling, validation, metrics, and visualization.
 
 ## Dataset
 
-The current experiment uses the Breast Cancer Wisconsin dataset from `scikit-learn`.
+This project uses the Breast Cancer Wisconsin dataset from `scikit-learn`.
 
 - 569 samples
 - 30 numeric features
 - Binary classification: malignant / benign
 
-## Implemented So Far
+## Implemented Components
 
-- Logistic Regression from scratch
-- Sigmoid function
-- Binary cross-entropy loss
-- Batch gradient descent
-- Train/test split with NumPy
-- Feature standardization using training-set statistics
-- Bias term
-- Accuracy, precision, recall, specificity, F1 score
-- ROC curve and AUC
-- Confusion matrix plot
-- Training loss curve
-- Learning-rate comparison
-- 5-fold cross-validation
-- Saving metrics and experiment results to CSV
+- From-scratch Logistic Regression in NumPy, including sigmoid prediction, binary cross-entropy loss, and batch gradient descent
+- Reproducible training and evaluation pipeline with train/test splitting, feature standardization, and bias handling
+- Custom evaluation metrics and visualizations, including precision, recall, F1 score, ROC-AUC, confusion matrix, and training loss curve
+- Learning-rate comparison, 5-fold cross-validation, and scikit-learn LogisticRegression baseline comparison
+- Saved experiment outputs, metrics, and figures under `results/`
 
 ## Project Structure
 
@@ -43,12 +34,14 @@ src/
 experiments/
 ├── run_experiment.py
 ├── compare_learning_rates.py
-└── run_cross_validation.py
+├── run_cross_validation.py
+└── run_baseline_comparison.py
 
 results/
 ├── metrics.csv
 ├── learning_rate_comparison.csv
 ├── cross_validation.csv
+├── baseline_comparison.csv
 └── figures/
     ├── loss_curve.png
     ├── roc_curve.png
@@ -57,10 +50,15 @@ results/
 
 ## How to Run
 
-Install dependencies and run the main experiment:
+Install dependencies:
 
 ```bash
 pip install -r requirements.txt
+```
+
+Run the main experiment:
+
+```bash
 python3 experiments/run_experiment.py
 ```
 
@@ -76,9 +74,15 @@ Run 5-fold cross-validation:
 python3 experiments/run_cross_validation.py
 ```
 
+Compare against scikit-learn LogisticRegression:
+
+```bash
+python3 experiments/run_baseline_comparison.py
+```
+
 ## Main Experiment Results
 
-Logistic Regression on one train/test split:
+From-scratch Logistic Regression on one train/test split:
 
 | Metric | Value |
 |---|---:|
@@ -91,6 +95,17 @@ Logistic Regression on one train/test split:
 | ROC AUC | 0.9928 |
 
 A small learning-rate comparison was performed, and `learning_rate=0.005` was selected because it achieved the lowest test BCE among the tested values while maintaining the same accuracy and F1 score.
+
+## Baseline Comparison
+
+The from-scratch Logistic Regression implementation was compared against `scikit-learn`'s `LogisticRegression` using the same train/test split and preprocessing pipeline.
+
+| Model | Accuracy | Precision | Recall | F1 Score | ROC AUC |
+|---|---:|---:|---:|---:|---:|
+| From-scratch Logistic Regression | 0.9646 | 0.9494 | 1.0000 | 0.9740 | 0.9928 |
+| scikit-learn LogisticRegression | 0.9646 | 0.9494 | 1.0000 | 0.9740 | 0.9902 |
+
+The from-scratch implementation achieved comparable performance to the scikit-learn baseline on this split.
 
 ## Cross-Validation Results
 
@@ -105,7 +120,7 @@ Using 5-fold cross-validation with `learning_rate=0.005`:
 | F1 Score | 0.9819 ± 0.0106 |
 | BCE Loss | 0.0774 ± 0.0240 |
 
-These results suggest that the Logistic Regression model performs consistently across different train/validation splits.
+These results suggest that the model performs consistently across different train/validation splits.
 
 ## Visualizations
 
@@ -117,6 +132,14 @@ Current plots:
 - ROC curve
 - Confusion matrix
 
-## Future Improvements
+## Reproducibility
 
-This project can be extended with additional from-scratch classifiers such as Naive Bayes and Gaussian MAP, model comparison tables, and unit tests for core functions.
+All experiment outputs are saved under the `results/` directory, including metric CSV files and generated figures.
+
+Experiments use fixed random seeds where applicable to make results reproducible.
+
+## Limitations
+
+This project currently focuses on binary classification with Logistic Regression. It is intended as an educational project that emphasizes understanding the algorithm, optimization process, preprocessing, and evaluation workflow.
+
+Potential extensions include adding regularization, additional from-scratch classifiers, unit tests, and evaluation on additional datasets.
