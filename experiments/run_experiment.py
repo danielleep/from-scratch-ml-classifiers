@@ -1,5 +1,6 @@
 import sys
 from pathlib import Path
+import csv
 
 # Make sure Python can import files from the project root
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -9,9 +10,16 @@ from src.data import load_breast_cancer_dataset, train_test_split_numpy
 from src.preprocessing import standardize_fit, standardize_transform, add_bias_term
 from src.logistic_regression import LogisticRegressionGD
 from src.metrics import classification_report_binary
-
+from src.visualization import plot_loss_curve
 
 def main():
+    # Create folders for saved results
+    results_dir = PROJECT_ROOT / "results"
+    figures_dir = results_dir / "figures"
+
+    results_dir.mkdir(exist_ok=True)
+    figures_dir.mkdir(exist_ok=True)
+
     # Load the dataset
     X, y, feature_names, target_names = load_breast_cancer_dataset()
 
@@ -61,6 +69,12 @@ def main():
     print(f"Number of iterations: {model.n_iter_}")
     print(f"Final training BCE loss: {model.loss_history_[-1]:.4f}")
 
+    # Save training loss curve
+    loss_curve_path = figures_dir / "loss_curve.png"
+    plot_loss_curve(model.loss_history_, loss_curve_path)
+
+    print(f"Loss curve saved to: {loss_curve_path}")
+
     # Predict labels for the test set
     y_pred = model.predict(X_test_bias)
 
@@ -72,6 +86,44 @@ def main():
     )
 
     test_bce = model.bce_loss(X_test_bias, y_test)
+
+    # Save metrics to CSV
+    metrics_path = results_dir / "metrics.csv"
+
+    with open(metrics_path, mode="w", newline="") as file:
+        writer = csv.writer(file)
+
+        writer.writerow([
+            "model",
+            "accuracy",
+            "precision",
+            "recall",
+            "specificity",
+            "f1",
+            "test_bce",
+            "tp",
+            "fp",
+            "tn",
+            "fn",
+            "n_iter"
+        ])
+
+        writer.writerow([
+            "Logistic Regression",
+            report["accuracy"],
+            report["precision"],
+            report["recall"],
+            report["specificity"],
+            report["f1"],
+            test_bce,
+            report["tp"],
+            report["fp"],
+            report["tn"],
+            report["fn"],
+            model.n_iter_
+        ])
+
+    print(f"Metrics saved to: {metrics_path}")
 
     print("\nTest results")
     print(f"TP: {report['tp']}")
