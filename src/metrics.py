@@ -95,3 +95,44 @@ def classification_report_binary(y_true, y_pred, positive_class=1):
         "specificity": specificity_score(y_true, y_pred, positive_class),
         "f1": f1_score(y_true, y_pred, positive_class),
     }
+
+def roc_curve_points(y_true, y_prob, positive_class=1):
+    """
+    Compute FPR and TPR values for different thresholds.
+    """
+    y_true = np.asarray(y_true)
+    y_prob = np.asarray(y_prob)
+
+    thresholds = np.linspace(0, 1, 101)
+
+    fpr_values = []
+    tpr_values = []
+
+    for threshold in thresholds:
+        y_pred = (y_prob >= threshold).astype(int)
+
+        tp, fp, tn, fn = confusion_matrix_binary(
+            y_true,
+            y_pred,
+            positive_class=positive_class
+        )
+
+        tpr = tp / (tp + fn) if (tp + fn) > 0 else 0.0
+        fpr = fp / (fp + tn) if (fp + tn) > 0 else 0.0
+
+        tpr_values.append(tpr)
+        fpr_values.append(fpr)
+
+    return np.array(fpr_values), np.array(tpr_values)
+
+
+def auc_score(fpr, tpr):
+    """
+    Compute AUC using the trapezoidal rule.
+    """
+    sorted_indices = np.argsort(fpr)
+
+    fpr_sorted = np.asarray(fpr)[sorted_indices]
+    tpr_sorted = np.asarray(tpr)[sorted_indices]
+
+    return np.trapz(tpr_sorted, fpr_sorted)

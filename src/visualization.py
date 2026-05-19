@@ -43,3 +43,21 @@ def plot_confusion_matrix(tp, fp, tn, fn, save_path):
     plt.tight_layout()
     plt.savefig(save_path)
     plt.close()
+
+def plot_roc_curve(fpr, tpr, auc, save_path):
+    """
+    Plot and save the ROC curve.
+    """
+    plt.figure(figsize=(6, 5))
+
+    plt.plot(fpr, tpr, label=f"AUC = {auc:.4f}")
+    plt.plot([0, 1], [0, 1], linestyle="--")
+
+    plt.xlabel("False Positive Rate")
+    plt.ylabel("True Positive Rate")
+    plt.title("ROC Curve")
+    plt.legend()
+
+    plt.tight_layout()
+    plt.savefig(save_path)
+    plt.close()

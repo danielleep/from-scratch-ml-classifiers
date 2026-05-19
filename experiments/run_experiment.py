@@ -9,8 +9,8 @@ sys.path.append(str(PROJECT_ROOT))
 from src.data import load_breast_cancer_dataset, train_test_split_numpy
 from src.preprocessing import standardize_fit, standardize_transform, add_bias_term
 from src.logistic_regression import LogisticRegressionGD
-from src.metrics import classification_report_binary
-from src.visualization import plot_loss_curve, plot_confusion_matrix
+from src.metrics import classification_report_binary, roc_curve_points, auc_score
+from src.visualization import plot_loss_curve, plot_confusion_matrix, plot_roc_curve
 
 def main():
     # Create folders for saved results
@@ -77,6 +77,7 @@ def main():
 
     # Predict labels for the test set
     y_pred = model.predict(X_test_bias)
+    y_prob = model.predict_proba(X_test_bias)
 
     # Evaluate predictions
     report = classification_report_binary(
@@ -86,6 +87,15 @@ def main():
     )
 
     test_bce = model.bce_loss(X_test_bias, y_test)
+
+    # Compute and save ROC curve
+    fpr, tpr = roc_curve_points(y_test, y_prob, positive_class=1)
+    roc_auc = auc_score(fpr, tpr)
+
+    roc_curve_path = figures_dir / "roc_curve.png"
+    plot_roc_curve(fpr, tpr, roc_auc, roc_curve_path)
+
+    print(f"ROC curve saved to: {roc_curve_path}")
 
     # Save confusion matrix plot
     confusion_matrix_path = figures_dir / "confusion_matrix.png"
@@ -114,6 +124,7 @@ def main():
             "specificity",
             "f1",
             "test_bce",
+            "roc_auc",
             "tp",
             "fp",
             "tn",
@@ -129,6 +140,7 @@ def main():
             report["specificity"],
             report["f1"],
             test_bce,
+            roc_auc,
             report["tp"],
             report["fp"],
             report["tn"],
@@ -149,6 +161,7 @@ def main():
     print(f"Specificity: {report['specificity']:.4f}")
     print(f"F1 score: {report['f1']:.4f}")
     print(f"Test BCE loss: {test_bce:.4f}")
+    print(f"ROC AUC: {roc_auc:.4f}")
 
 
 if __name__ == "__main__":
