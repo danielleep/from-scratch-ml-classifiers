@@ -10,7 +10,7 @@ from src.data import load_breast_cancer_dataset, train_test_split_numpy
 from src.preprocessing import standardize_fit, standardize_transform, add_bias_term
 from src.logistic_regression import LogisticRegressionGD
 from src.metrics import classification_report_binary
-from src.visualization import plot_loss_curve
+from src.visualization import plot_loss_curve, plot_confusion_matrix
 
 def main():
     # Create folders for saved results
@@ -86,6 +86,19 @@ def main():
     )
 
     test_bce = model.bce_loss(X_test_bias, y_test)
+
+    # Save confusion matrix plot
+    confusion_matrix_path = figures_dir / "confusion_matrix.png"
+
+    plot_confusion_matrix(
+        report["tp"],
+        report["fp"],
+        report["tn"],
+        report["fn"],
+        confusion_matrix_path
+    )
+
+    print(f"Confusion matrix saved to: {confusion_matrix_path}")
 
     # Save metrics to CSV
     metrics_path = results_dir / "metrics.csv"
