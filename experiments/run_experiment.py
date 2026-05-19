@@ -57,7 +57,7 @@ def main():
 
     # Create and train the logistic regression model
     model = LogisticRegressionGD(
-        learning_rate=0.01,
+        learning_rate=0.005,
         max_iter=10000,
         eps=1e-6,
         random_state=42
